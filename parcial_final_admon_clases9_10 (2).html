@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcial Final — Administración · Matemáticas II · UDI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#eef0f4;color:#1a1a18;font-size:14px;line-height:1.5}
+.wrap{max-width:800px;margin:0 auto;padding:1.5rem 1rem 3rem}
+
+.print-bar{position:sticky;top:0;z-index:50;background:#ffffff;border:1px solid #d8d6cc;border-radius:10px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;gap:10px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(20,30,60,0.06)}
+.print-bar span{font-size:12px;color:#666;font-weight:500}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap}
+.print-btn{font-size:13px;font-weight:700;padding:9px 18px;border-radius:7px;border:none;background:#f0a500;color:#fff;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.15);transition:transform .08s}
+.print-btn:hover{background:#d49000;transform:translateY(-1px)}
+.check-btn{font-size:13px;font-weight:700;padding:9px 18px;border-radius:7px;border:none;background:#1d4ed8;color:#fff;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.15);transition:transform .08s}
+.check-btn:hover{background:#1741b0;transform:translateY(-1px)}
+
+.doc-header{border:1px solid #d8d6cc;border-radius:14px;padding:1.5rem 1.75rem;margin-bottom:1.25rem;background:linear-gradient(135deg,#ffffff 0%,#f7f9fd 100%);box-shadow:0 1px 4px rgba(20,30,60,0.05)}
+.doc-title{font-size:19px;font-weight:800;color:#0f1b33;margin-bottom:4px;letter-spacing:-0.01em}
+.doc-sub{font-size:13px;color:#5a6478;margin-bottom:1.1rem}
+.meta-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.meta-item{background:#fff;border-radius:8px;padding:9px 11px;border:1px solid #e3e1da}
+.meta-lbl{font-size:10px;color:#92928a;margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.meta-val{font-size:12.5px;font-weight:700;color:#1a1a18}
+
+.student-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.field-wrap{display:flex;flex-direction:column;gap:4px}
+.field-lbl{font-size:10px;font-weight:700;color:#5a6478;text-transform:uppercase;letter-spacing:.05em}
+.field-box{border:1.5px solid #c2c0b8;border-radius:8px;padding:9px 11px;min-height:36px;font-size:13px;color:#1a1a18;background:#fff;outline:none;cursor:text;transition:border-color .12s}
+.field-box:focus{border-color:#1d4ed8;box-shadow:0 0 0 3px rgba(29,78,216,0.08)}
+.field-box:empty:before{content:attr(data-ph);color:#aaa}
+
+.intro-box{background:linear-gradient(135deg,#fff8e6,#fffbf0);border:1px solid #f0c97a;border-radius:10px;padding:13px 16px;margin-bottom:1.4rem;font-size:12.5px;color:#7a5200;line-height:1.7}
+
+.table-wrap{background:#fff;border:1px solid #d8d6cc;border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.4rem;box-shadow:0 1px 4px rgba(20,30,60,0.04)}
+table.pts{width:100%;border-collapse:collapse;font-size:12.5px}
+table.pts th, table.pts td{border:1px solid #e6e4dc;padding:8px 10px;text-align:left}
+table.pts th{background:#f3f5fa;font-weight:700;color:#3a4258}
+table.pts td.num{text-align:center;font-weight:700;color:#1d4ed8}
+table.pts tr:last-child td{background:#f7f9fd}
+
+.sec{margin-bottom:1.8rem}
+.sec-header{display:flex;align-items:center;gap:10px;margin-bottom:0.85rem;padding-bottom:8px;border-bottom:2px solid #dde1ea}
+.sec-num{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 3px rgba(29,78,216,0.3)}
+.sec-title{font-size:14.5px;font-weight:800;color:#0f1b33}
+.sec-pts{font-size:11px;color:#92928a;margin-left:auto;background:#f3f5fa;padding:3px 10px;border-radius:20px;font-weight:700}
+
+.q-item{background:#fff;border:1px solid #dcdad2;border-radius:12px;padding:1.1rem 1.3rem;margin-bottom:0.9rem;box-shadow:0 1px 3px rgba(20,30,60,0.04)}
+.q-text{font-size:13.5px;color:#1a1a18;line-height:1.7;margin-bottom:0.7rem}
+.q-pts{font-size:11px;color:#888;margin-bottom:6px;font-weight:600}
+.formula-hint{font-size:12px;color:#3a4258;background:#eef3ff;border:1px solid #c7d7f8;border-radius:8px;padding:8px 13px;margin-bottom:9px;font-family:'Consolas','Courier New',monospace;line-height:1.8}
+
+.graph-wrap{background:#fafbfd;border:1px solid #e3e6ee;border-radius:10px;padding:14px 10px 10px;margin-bottom:1rem}
+.equilibrium-svg{width:100%;max-width:480px;height:auto;display:block;margin:0 auto}
+.graph-caption{font-size:11.5px;color:#5a6478;text-align:center;margin-top:6px;line-height:1.5;padding:0 8px}
+
+.subpart{margin-bottom:0.85rem}
+.subpart-label{font-size:12.5px;font-weight:700;color:#333d52;margin-bottom:5px;display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+
+.open-box{border:1.5px solid #c2c0b8;border-radius:8px;padding:10px 13px;min-height:65px;font-size:13px;color:#1a1a18;background:#fafaf8;outline:none;width:100%;line-height:1.65;transition:border-color .12s}
+.open-box:focus{border-color:#1d4ed8;box-shadow:0 0 0 3px rgba(29,78,216,0.08);background:#fff}
+.open-box:empty:before{content:attr(data-ph);color:#aaa}
+
+.exercise-box{border:1.5px solid #c2c0b8;border-radius:8px;padding:10px 13px;min-height:90px;font-size:13px;color:#1a1a18;background:#fafaf8;outline:none;width:100%;font-family:'Consolas','Courier New',monospace;line-height:1.85;transition:border-color .12s}
+.exercise-box:focus{border-color:#1d4ed8;box-shadow:0 0 0 3px rgba(29,78,216,0.08);background:#fff}
+.exercise-box:empty:before{content:attr(data-ph);color:#aaa;font-family:'Segoe UI',Arial,sans-serif}
+
+.math-template{background:#fafbfd;border:1.5px solid #d4d9e3;border-radius:10px;padding:14px 16px;margin-bottom:9px}
+.math-line{font-size:14.5px;color:#1a1a18;line-height:3.2;font-family:'Cambria Math','Times New Roman',serif}
+.math-line + .math-line{margin-top:2px}
+.blank{display:inline-block;width:60px;min-width:46px;border:none;border-bottom:2px solid #1d4ed8;background:#eef3ff;text-align:center;font-size:14px;font-family:'Consolas','Courier New',monospace;color:#0f1b33;padding:2px 6px;margin:0 2px;outline:none;border-radius:3px 3px 0 0;vertical-align:middle}
+.blank:focus{background:#dbeafe;border-bottom-color:#1741b0}
+.blank.wide{width:120px;min-width:90px}
+.blank.narrow{width:38px;min-width:32px;font-size:12px;padding:1px 3px}
+.blank:disabled{background:#f3f5fa;color:#5a6478;border-bottom-color:#c2c0b8;cursor:default}
+.math-label{font-size:10.5px;color:#92928a;text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:6px}
+.int-limits{display:inline-flex;flex-direction:column;align-items:flex-start;vertical-align:middle;margin:0 1px;line-height:1.1}
+.int-limits .blank.narrow{width:30px;min-width:26px;font-size:10.5px;padding:0 2px;margin:1px 0}
+.fixed-limit{font-size:11px;color:#3a4258;font-family:'Cambria Math','Times New Roman',serif;padding:1px 2px}
+.auto-tag{font-size:10px;background:#dbeafe;color:#1d4ed8;padding:3px 9px;border-radius:20px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.manual-tag{font-size:10px;background:#fef3c7;color:#92620a;padding:3px 9px;border-radius:20px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+
+.mc-options{display:flex;flex-direction:column;gap:7px;margin-top:6px}
+.mc-option{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1.5px solid #d8d6cc;border-radius:8px;cursor:pointer;transition:background .12s,border-color .12s;background:#fff}
+.mc-option:hover{background:#f3f5fa;border-color:#aeb6c8}
+.mc-option input[type="radio"]{accent-color:#1d4ed8;width:15px;height:15px;cursor:pointer;flex-shrink:0}
+.mc-letter{width:22px;height:22px;border-radius:6px;background:#eef1f6;color:#5a6478;font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;text-transform:uppercase}
+.mc-text{font-size:13px;color:#1a1a18;font-family:'Consolas','Courier New',monospace}
+.mc-options.locked .mc-option{cursor:default;pointer-events:none}
+.mc-options.locked .mc-option:hover{background:#fff}
+.mc-options.locked .mc-option.correct-answer{border-color:#16a34a;background:#f0fdf4}
+.mc-options.locked .mc-option.wrong-selected{border-color:#dc2626;background:#fef2f2}
+.mc-result-icon{margin-left:auto;font-size:15px;font-weight:800}
+.mc-result-icon.ok{color:#16a34a}
+.mc-result-icon.bad{color:#dc2626}
+
+.check-btn:disabled{background:#9ca3af;cursor:not-allowed;transform:none}
+.verified-banner{display:none;background:#f0fdf4;border:1px solid #86efac;color:#166534;font-size:12px;font-weight:600;padding:8px 14px;border-radius:8px;margin-bottom:1.2rem;align-items:center;gap:8px}
+.verified-banner.show{display:flex}
+
+.pts-row{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid #ececec;flex-wrap:wrap}
+.pts-lbl{font-size:11.5px;color:#888;font-weight:700}
+.pts-box{width:54px;border:1.5px solid #c2c0b8;border-radius:7px;padding:6px 8px;font-size:12.5px;text-align:center;background:#fff;outline:none;transition:border-color .12s}
+.pts-box[readonly]{background:#eef3ff;color:#1d4ed8;font-weight:800;border-color:#c7d7f8}
+.pts-box:focus{border-color:#1d4ed8;box-shadow:0 0 0 3px rgba(29,78,216,0.08)}
+.pts-total{font-size:11.5px;color:#888}
+
+.score-panel{background:#fff;border:2px solid #1d4ed8;border-radius:14px;padding:1.2rem 1.4rem;margin-top:0.6rem;margin-bottom:1.2rem;box-shadow:0 4px 16px rgba(29,78,216,0.08)}
+.score-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+.score-row:last-child{margin-bottom:0}
+.score-lbl{font-size:13.5px;font-weight:800;color:#0f1b33}
+.score-sub{font-size:11px;color:#92928a;margin-top:2px}
+.score-val{font-size:19px;font-weight:800;color:#1d4ed8}
+.score-val.manual{color:#92620a}
+.score-val.final{color:#16a34a;font-size:24px}
+.divider{border-top:1px solid #ececec;margin:9px 0}
+
+.obs-box{border:1px solid #b0aea8;border-radius:6px;padding:9px 12px;min-height:55px;font-size:12px;color:#555;background:#f9f9f7;outline:none;width:100%}
+.obs-box:focus{border-color:#2563eb}
+.obs-box:empty:before{content:attr(data-ph);color:#aaa}
+
+@media print{
+  .print-bar{display:none!important}
+  body{background:#fff}
+  .wrap{padding:0}
+  .q-item,.sec,.doc-header{page-break-inside:avoid}
+  .formula-hint{background:#f0f4ff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .intro-box{background:#fff7e6!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .score-panel{border-color:#2563eb!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .auto-tag,.manual-tag{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .graph-wrap{-webkit-print-color-adjust:exact;print-color-adjust:exact;break-inside:avoid}
+  .mc-option.correct-answer,.mc-option.wrong-selected{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .math-template{break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .blank{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="print-bar">
+  <span>Parcial Final · Administración de Empresas · Matemáticas II · UDI</span>
+  <div class="btn-group">
+    <button class="check-btn" onclick="verificar()">✓ Verificar respuestas</button>
+    <button class="print-btn" onclick="window.print()">🖨 Imprimir / Guardar PDF</button>
+  </div>
+</div>
+
+<div class="doc-header">
+  <div class="doc-title">Parcial Final — Aplicaciones de la integral</div>
+  <div class="doc-sub">Costo, ingreso, utilidad marginal · Funciones totales · Excedente del consumidor y del productor</div>
+  <div class="meta-row">
+    <div class="meta-item"><div class="meta-lbl">Asignatura</div><div class="meta-val">Matemáticas II</div></div>
+    <div class="meta-item"><div class="meta-lbl">Programa</div><div class="meta-val">Administración de Empresas</div></div>
+    <div class="meta-item"><div class="meta-lbl">Docente</div><div class="meta-val">Eder Santiago Martelo Gómez</div></div>
+    <div class="meta-item"><div class="meta-lbl">Universidad</div><div class="meta-val">UDI</div></div>
+  </div>
+</div>
+
+<div class="student-grid">
+  <div class="field-wrap" style="grid-column:1/-1">
+    <div class="field-lbl">Nombre completo</div>
+    <div class="field-box" contenteditable="true" data-ph="Escribe tu nombre completo..."></div>
+  </div>
+  <div class="field-wrap">
+    <div class="field-lbl">Código estudiantil</div>
+    <div class="field-box" contenteditable="true" data-ph=""></div>
+  </div>
+  <div class="field-wrap">
+    <div class="field-lbl">Grupo</div>
+    <div class="field-box" contenteditable="true" data-ph=""></div>
+  </div>
+  <div class="field-wrap">
+    <div class="field-lbl">Fecha</div>
+    <div class="field-box" contenteditable="true" data-ph="dd/mm/aaaa"></div>
+  </div>
+</div>
+
+<div class="verified-banner" id="verified-banner">✓ Respuestas verificadas. Las opciones de selección múltiple quedaron bloqueadas y no se pueden modificar.</div>
+
+<div class="intro-box">
+  <strong>Instrucciones.</strong> Lea cuidadosamente cada punto. En los ejercicios con desarrollo encontrará una plantilla con la integral o fórmula ya escrita: complete únicamente los espacios en blanco (coeficientes, límites y resultados) siguiendo el orden del procedimiento. Las preguntas conceptuales y de interpretación se responden en las cajas de texto libre. En integrales definidas no escriba +C.
+  <br><br>
+  <strong>Sobre la calificación:</strong> los campos marcados <span class="auto-tag">AUTO</span> se verifican automáticamente al hacer clic en <strong>Verificar respuestas</strong> (solo se puede usar una vez). Los campos marcados <span class="manual-tag">DOCENTE</span> contienen desarrollo y argumentación, y serán calificados por el profesor. Al final encontrará el puntaje parcial automático; el profesor diligenciará el resto y el total definitivo.
+</div>
+
+<div class="table-wrap">
+  <table class="pts">
+    <tr><th>Punto</th><th>Tema</th><th>Puntaje</th></tr>
+    <tr><td>1</td><td>Interpretación conceptual de funciones marginales</td><td class="num">0.6</td></tr>
+    <tr><td>2</td><td>Costo marginal y cambio acumulado</td><td class="num">0.9</td></tr>
+    <tr><td>3</td><td>Ingreso, costo y utilidad marginal</td><td class="num">1.1</td></tr>
+    <tr><td>4</td><td>Recuperación de función total</td><td class="num">1.0</td></tr>
+    <tr><td>5</td><td>Excedente del consumidor y productor</td><td class="num">1.4</td></tr>
+    <tr><td colspan="2" style="font-weight:700">Total</td><td class="num" style="font-weight:700">5.0</td></tr>
+  </table>
+</div>
+
+<!-- PUNTO 1 -->
+<div class="sec">
+  <div class="sec-header">
+    <div class="sec-num">1</div>
+    <div class="sec-title">Interpretación conceptual de funciones marginales</div>
+    <div class="sec-pts">0.6 pts</div>
+  </div>
+  <div class="q-item">
+    <div class="q-text">Responda con sus propias palabras:</div>
+
+    <div class="subpart">
+      <div class="subpart-label">a) ¿Qué representa una función de costo marginal C'(x) en una empresa? <span class="manual-tag">DOCENTE</span></div>
+      <div class="open-box" contenteditable="true" data-ph="Escribe tu respuesta aquí..."></div>
+    </div>
+
+    <div class="subpart">
+      <div class="subpart-label">b) ¿Por qué la integral definida ∫ₐᵇ C'(x) dx no representa necesariamente el costo total, sino el cambio en el costo total? <span class="manual-tag">DOCENTE</span></div>
+      <div class="open-box" contenteditable="true" data-ph="Escribe tu respuesta aquí..."></div>
+    </div>
+
+    <div class="pts-row"><div class="pts-lbl">Pts (docente):</div><input class="pts-box" type="text" placeholder="—"><div class="pts-total">/ 0.6</div></div>
+  </div>
+</div>
+
+<!-- PUNTO 2 -->
+<div class="sec">
+  <div class="sec-header">
+    <div class="sec-num">2</div>
+    <div class="sec-title">Costo marginal y cambio acumulado</div>
+    <div class="sec-pts">0.9 pts</div>
+  </div>
+  <div class="q-item">
+    <div class="q-text">Una empresa tiene costo marginal: C'(x) = 18 + 0,04x, donde x representa unidades producidas y C'(x) está en pesos por unidad.</div>
+
+    <div class="subpart">
+      <div class="subpart-label">a) Plantee la integral que representa el incremento en el costo total al pasar de 100 a 250 unidades. <span class="manual-tag">DOCENTE</span></div>
+      <div class="math-template">
+        <div class="math-label">Complete el planteamiento</div>
+        <div class="math-line">
+          Δ C &nbsp;=&nbsp; ∫<span class="int-limits"><input type="text" class="blank narrow" placeholder="b"><input type="text" class="blank narrow" placeholder="a"></span>&nbsp; ( <input type="text" class="blank narrow" placeholder="núm."> + <input type="text" class="blank narrow" placeholder="0,00"> x ) dx
+        </div>
+      </div>
+    </div>
+
+    <div class="subpart">
+      <div class="subpart-label">b) Calcule dicho incremento. <span class="auto-tag">AUTO</span></div>
+      <div class="math-template">
+        <div class="math-label">Complete el cálculo paso a paso</div>
+        <div class="math-line">
+          Antiderivada: F(x) &nbsp;=&nbsp; <input type="text" class="blank narrow" placeholder="núm."> x &nbsp;+&nbsp; <input type="text" class="blank narrow" placeholder="0,00"> x<sup>2</sup>
+        </div>
+        <div class="math-line">
+          F(250) &nbsp;=&nbsp; <input type="text" class="blank" placeholder="—">
+        </div>
+        <div class="math-line">
+          F(100) &nbsp;=&nbsp; <input type="text" class="blank" placeholder="—">
+        </div>
+        <div class="math-line">
+          Δ C &nbsp;=&nbsp; F(250) − F(100) &nbsp;=&nbsp; <input type="text" class="blank wide" placeholder="resultado">
+        </div>
+      </div>
+      <div class="mc-options" data-qid="p2b" data-correct="b">
+        <label class="mc-option"><input type="radio" name="p2b" value="a"><span class="mc-letter">a</span><span class="mc-text">ΔC = $5400</span></label>
+        <label class="mc-option"><input type="radio" name="p2b" value="b"><span class="mc-letter">b</span><span class="mc-text">ΔC = $3750</span></label>
+        <label class="mc-option"><input type="radio" name="p2b" value="c"><span class="mc-letter">c</span><span class="mc-text">ΔC = $1425</span></label>
+        <label class="mc-option"><input type="radio" name="p2b" value="d"><span class="mc-letter">d</span><span class="mc-text">ΔC = $2000</span></label>
+      </div>
+    </div>
+
+    <div class="subpart">
+      <div class="subpart-label">c) Interprete el resultado en una frase. <span class="manual-tag">DOCENTE</span></div>
+      <div class="open-box" contenteditable="true" data-ph="Escribe tu interpretación..."></div>
+    </div>
+
+    <div class="pts-row"><div class="pts-lbl">Pts (docente, a y c):</div><input class="pts-box" type="text" placeholder="—"><div class="pts-total">/ 0.6</div>
+      <div class="pts-lbl" style="margin-left:14px">Pts (auto, b):</div><span id="auto-p2" style="font-weight:700;color:#2563eb">0</span><div class="pts-total">/ 0.3</div>
+    </div>
+  </div>
+</div>
+
+<!-- PUNTO 3 -->
+<div class="sec">
+  <div class="sec-header">
+    <div class="sec-num">3</div>
+    <div class="sec-title">Ingreso, costo y utilidad marginal</div>
+    <div class="sec-pts">1.1 pts</div>
+  </div>
+  <div class="q-item">
+    <div class="q-text">Una empresa tiene las siguientes funciones marginales: R'(x) = 100 − 0,05x, C'(x) = 35 + 0,02x.</div>
+
+    <div class="subpart">
+      <div class="subpart-label">a) Encuentre la función de utilidad marginal U'(x). <span class="auto-tag">AUTO</span></div>
+      <div class="math-template">
+        <div class="math-label">Complete la resta de funciones marginales</div>
+        <div class="math-line">
+          U'(x) &nbsp;=&nbsp; R'(x) − C'(x) &nbsp;=&nbsp; ( 100 − 0,05x ) − ( 35 + 0,02x )
+        </div>
+        <div class="math-line">
+          U'(x) &nbsp;=&nbsp; <input type="text" class="blank narrow" placeholder="núm."> − <input type="text" class="blank narrow" placeholder="0,00"> x
+        </div>
+      </div>
+      <div class="mc-options" data-qid="p3a" data-correct="b">
+        <label class="mc-option"><input type="radio" name="p3a" value="a"><span class="mc-letter">a</span><span class="mc-text">U'(x) = 135 − 0,03x</span></label>
+        <label class="mc-option"><input type="radio" name="p3a" value="b"><span class="mc-letter">b</span><span class="mc-text">U'(x) = 65 − 0,07x</span></label>
+        <label class="mc-option"><input type="radio" name="p3a" value="c"><span class="mc-letter">c</span><span class="mc-text">U'(x) = 65 + 0,07x</span></label>
+        <label class="mc-option"><input type="radio" name="p3a" value="d"><span class="mc-letter">d</span><span class="mc-text">U'(x) = −65 + 0,07x</span></label>
+      </div>
+    </div>
+
+    <div class="subpart">
+      <div class="subpart-label">b) Calcule el cambio en la utilidad cuando el nivel de ventas pasa de 100 a 300 unidades. <span class="auto-tag">AUTO</span></div>
+      <div class="math-template">
+        <div class="math-label">Complete el cálculo paso a paso</div>
+        <div class="math-line">
+          Δ U &nbsp;=&nbsp; ∫<span class="int-limits"><input type="text" class="blank narrow" placeholder="b"><input type="text" class="blank narrow" placeholder="a"></span>&nbsp; ( 65 − 0,07x ) dx
+        </div>
+        <div class="math-line">
+          Antiderivada: F(x) &nbsp;=&nbsp; 65x &nbsp;−&nbsp; <input type="text" class="blank narrow" placeholder="0,00"> x<sup>2</sup>
+        </div>
+        <div class="math-line">
+          F(300) &nbsp;=&nbsp; <input type="text" class="blank" placeholder="—">
+        </div>
+        <div class="math-line">
+          F(100) &nbsp;=&nbsp; <input type="text" class="blank" placeholder="—">
+        </div>
+        <div class="math-line">
+          Δ U &nbsp;=&nbsp; F(300) − F(100) &nbsp;=&nbsp; <input type="text" class="blank wide" placeholder="resultado">
+        </div>
+      </div>
+      <div class="mc-options" data-qid="p3b" data-correct="c">
+        <label class="mc-option"><input type="radio" name="p3b" value="a"><span class="mc-letter">a</span><span class="mc-text">ΔU = $16350</span></label>
+        <label class="mc-option"><input type="radio" name="p3b" value="b"><span class="mc-letter">b</span><span class="mc-text">ΔU = $6150</span></label>
+        <label class="mc-option"><input type="radio" name="p3b" value="c"><span class="mc-letter">c</span><span class="mc-text">ΔU = $10200</span></label>
+        <label class="mc-option"><input type="radio" name="p3b" value="d"><span class="mc-letter">d</span><span class="mc-text">ΔU = $13200</span></label>
+      </div>
+    </div>
+
+    <div class="subpart">
+      <div class="subpart-label">c) Interprete el resultado obtenido. <span class="manual-tag">DOCENTE</span></div>
+      <div class="open-box" contenteditable="true" data-ph="Escribe tu interpretación..."></div>
+    </div>
+
+    <div class="pts-row"><div class="pts-lbl">Pts (docente, c):</div><input class="pts-box" type="text" placeholder="—"><div class="pts-total">/ 0.4</div>
+      <div class="pts-lbl" style="margin-left:14px">Pts (auto, a y b):</div><span id="auto-p3" style="font-weight:700;color:#2563eb">0</span><div class="pts-total">/ 0.7</div>
+    </div>
+  </div>
+</div>
+
+<!-- PUNTO 4 -->
+<div class="sec">
+  <div class="sec-header">
+    <div class="sec-num">4</div>
+    <div class="sec-title">Recuperación de función total</div>
+    <div class="sec-pts">1.0 pts</div>
+  </div>
+  <div class="q-item">
+    <div class="q-text">La función de costo marginal de una empresa es: C'(x) = 25 + 0,02x. Además, se sabe que el costo fijo es C(0) = 800.</div>
+
+    <div class="subpart">
+      <div class="subpart-label">a) Encuentre la función de costo total C(x). <span class="auto-tag">AUTO</span></div>
+      <div class="math-template">
+        <div class="math-label">Complete la integración y el uso de C(0)=800</div>
+        <div class="math-line">
+          C(x) &nbsp;=&nbsp; ∫ ( 25 + 0,02x ) dx &nbsp;=&nbsp; 25x &nbsp;+&nbsp; <input type="text" class="blank narrow" placeholder="0,00"> x<sup>2</sup> &nbsp;+&nbsp; K
+        </div>
+        <div class="math-line">
+          C(0) = 800 &nbsp;⟹&nbsp; 25(0) + 0,01(0)<sup>2</sup> + K &nbsp;=&nbsp; 800 &nbsp;⟹&nbsp; K &nbsp;=&nbsp; <input type="text" class="blank" placeholder="núm.">
+        </div>
+        <div class="math-line">
+          C(x) &nbsp;=&nbsp; 25x &nbsp;+&nbsp; <input type="text" class="blank narrow" placeholder="0,00"> x<sup>2</sup> &nbsp;+&nbsp; <input type="text" class="blank" placeholder="núm.">
+        </div>
+      </div>
+      <div class="mc-options" data-qid="p4a" data-correct="b">
+        <label class="mc-option"><input type="radio" name="p4a" value="a"><span class="mc-letter">a</span><span class="mc-text">C(x) = 25x + 0,01x²</span></label>
+        <label class="mc-option"><input type="radio" name="p4a" value="b"><span class="mc-letter">b</span><span class="mc-text">C(x) = 25x + 0,01x² + 800</span></label>
+        <label class="mc-option"><input type="radio" name="p4a" value="c"><span class="mc-letter">c</span><span class="mc-text">C(x) = 25x + 0,02x² + 800</span></label>
+        <label class="mc-option"><input type="radio" name="p4a" value="d"><span class="mc-letter">d</span><span class="mc-text">C(x) = 25x + 0,01x² + 775</span></label>
+      </div>
+    </div>
+
+    <div class="subpart">
+      <div class="subpart-label">b) Calcule C(100). <span class="auto-tag">AUTO</span></div>
+      <div class="math-template">
+        <div class="math-label">Sustituya x=100 en C(x)</div>
+        <div class="math-line">
+          C(100) &nbsp;=&nbsp; 25(100) + 0,01(100)<sup>2</sup> + 800 &nbsp;=&nbsp; <input type="text" class="blank wide" placeholder="resultado">
+        </div>
+      </div>
+      <div class="mc-options" data-qid="p4b" data-correct="c">
+        <label class="mc-option"><input type="radio" name="p4b" value="a"><span class="mc-letter">a</span><span class="mc-text">C(100) = $2600</span></label>
+        <label class="mc-option"><input type="radio" name="p4b" value="b"><span class="mc-letter">b</span><span class="mc-text">C(100) = $2500</span></label>
+        <label class="mc-option"><input type="radio" name="p4b" value="c"><span class="mc-letter">c</span><span class="mc-text">C(100) = $3400</span></label>
+        <label class="mc-option"><input type="radio" name="p4b" value="d"><span class="mc-letter">d</span><span class="mc-text">C(100) = $3500</span></label>
+      </div>
+    </div>
+
+    <div class="subpart">
+      <div class="subpart-label">c) Explique qué representa C(0) = 800 en este contexto. <span class="manual-tag">DOCENTE</span></div>
+      <div class="open-box" contenteditable="true" data-ph="Escribe tu respuesta aquí..."></div>
+    </div>
+
+    <div class="pts-row"><div class="pts-lbl">Pts (docente, c):</div><input class="pts-box" type="text" placeholder="—"><div class="pts-total">/ 0.3</div>
+      <div class="pts-lbl" style="margin-left:14px">Pts (auto, a y b):</div><span id="auto-p4" style="font-weight:700;color:#2563eb">0</span><div class="pts-total">/ 0.7</div>
+    </div>
+  </div>
+</div>
+
+<!-- PUNTO 5 -->
+<div class="sec">
+  <div class="sec-header">
+    <div class="sec-num">5</div>
+    <div class="sec-title">Excedente del consumidor y productor</div>
+    <div class="sec-pts">1.4 pts</div>
+  </div>
+  <div class="q-item">
+    <div class="q-text">La demanda y la oferta de un producto están dadas por: D(q) = 70 − 2q, S(q) = 10 + q, donde q representa la cantidad y el precio está en unidades monetarias.</div>
+
+    <div class="graph-wrap">
+      <svg viewBox="0 0 480 320" xmlns="http://www.w3.org/2000/svg" class="equilibrium-svg">
+        <!-- Ejes -->
+        <line x1="60" y1="270" x2="440" y2="270" stroke="#5a6478" stroke-width="1.5"/>
+        <line x1="60" y1="270" x2="60" y2="20" stroke="#5a6478" stroke-width="1.5"/>
+        <text x="445" y="275" font-size="12" fill="#5a6478" font-family="Segoe UI, Arial">q</text>
+        <text x="48" y="18" font-size="12" fill="#5a6478" font-family="Segoe UI, Arial">p</text>
+
+        <!-- Escala: q de 0 a 40 -> x 60 a 420 (9 px/unidad) | p de 0 a 80 -> y 270 a 20 (3.125 px/unidad) -->
+        <!-- Equilibrio: q0=20 -> x=240 ; p0=30 -> y=176.25 -->
+        <!-- Área EC: entre D(q) y p0=30, de q=0 a q0=20 -->
+        <polygon points="60,51.25 240,176.25 60,176.25" fill="#1d4ed8" fill-opacity="0.28" stroke="none"/>
+
+        <!-- Área EP: entre p0=30 y S(q), de q=0 a q0=20 -->
+        <polygon points="60,238.75 240,176.25 60,176.25" fill="#16a34a" fill-opacity="0.28" stroke="none"/>
+
+        <!-- Curva de demanda D(q)=70-2q : q=0->p=70 (y=51.25), q=35->p=0 (y=270) -->
+        <line x1="60" y1="51.25" x2="375" y2="270" stroke="#1d4ed8" stroke-width="2.2"/>
+        <text x="380" y="270" font-size="12" fill="#1d4ed8" font-family="Segoe UI, Arial" font-weight="700">D(q)</text>
+
+        <!-- Curva de oferta S(q)=10+q : q=0->p=10 (y=238.75), q=40->p=50 (y=113.75) -->
+        <line x1="60" y1="238.75" x2="420" y2="113.75" stroke="#16a34a" stroke-width="2.2"/>
+        <text x="424" y="113.75" font-size="12" fill="#16a34a" font-family="Segoe UI, Arial" font-weight="700">S(q)</text>
+
+        <!-- Líneas guía al punto de equilibrio (q0=20, p0=30 -> x=240, y=176.25) -->
+        <line x1="240" y1="270" x2="240" y2="176.25" stroke="#92928a" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="60" y1="176.25" x2="240" y2="176.25" stroke="#92928a" stroke-width="1" stroke-dasharray="4,3"/>
+        <circle cx="240" cy="176.25" r="4.5" fill="#0f1b33"/>
+
+        <!-- Etiquetas de ejes -->
+        <text x="234" y="288" font-size="11.5" fill="#333d52" font-family="Segoe UI, Arial">q₀</text>
+        <text x="36" y="180" font-size="11.5" fill="#333d52" font-family="Segoe UI, Arial">p₀</text>
+
+        <!-- Etiquetas de área -->
+        <text x="120" y="130" font-size="13" fill="#1d4ed8" font-family="Segoe UI, Arial" font-weight="700">EC</text>
+        <text x="120" y="220" font-size="13" fill="#16a34a" font-family="Segoe UI, Arial" font-weight="700">EP</text>
+      </svg>
+      <div class="graph-caption">Punto de equilibrio (q₀, p₀) entre demanda D(q) y oferta S(q). El área azul es el excedente del consumidor (EC) y el área verde es el excedente del productor (EP).</div>
+    </div>
+
+    <div class="subpart">
+      <div class="subpart-label">a) Encuentre la cantidad de equilibrio q₀ y el precio de equilibrio p₀. <span class="auto-tag">AUTO</span></div>
+      <div class="math-template">
+        <div class="math-label">Iguale D(q) = S(q)</div>
+        <div class="math-line">
+          70 − 2q &nbsp;=&nbsp; 10 + q &nbsp;⟹&nbsp; <input type="text" class="blank" placeholder="núm."> &nbsp;=&nbsp; <input type="text" class="blank narrow" placeholder="núm."> q
+        </div>
+        <div class="math-line">
+          q₀ &nbsp;=&nbsp; <input type="text" class="blank" placeholder="—">
+        </div>
+        <div class="math-line">
+          p₀ &nbsp;=&nbsp; D(q₀) &nbsp;=&nbsp; 70 − 2( <input type="text" class="blank narrow" placeholder="q₀"> ) &nbsp;=&nbsp; <input type="text" class="blank" placeholder="—">
+        </div>
+      </div>
+      <div class="mc-options" data-qid="p5a" data-correct="b">
+        <label class="mc-option"><input type="radio" name="p5a" value="a"><span class="mc-letter">a</span><span class="mc-text">q₀ = 15, p₀ = 40</span></label>
+        <label class="mc-option"><input type="radio" name="p5a" value="b"><span class="mc-letter">b</span><span class="mc-text">q₀ = 20, p₀ = 30</span></label>
+        <label class="mc-option"><input type="radio" name="p5a" value="c"><span class="mc-letter">c</span><span class="mc-text">q₀ = 30, p₀ = 20</span></label>
+        <label class="mc-option"><input type="radio" name="p5a" value="d"><span class="mc-letter">d</span><span class="mc-text">q₀ = 20, p₀ = 40</span></label>
+      </div>
+    </div>
+
+    <div class="subpart">
+      <div class="subpart-label">b) Plantee y calcule el excedente del consumidor. <span class="auto-tag">AUTO</span></div>
+      <div class="math-template">
+        <div class="math-label">Complete el planteamiento y cálculo de EC</div>
+        <div class="math-line">
+          EC &nbsp;=&nbsp; ∫<span class="int-limits"><span class="fixed-limit">q₀</span><span class="fixed-limit">0</span></span>&nbsp; [ D(q) − p₀ ] dq &nbsp;=&nbsp; ∫<span class="int-limits"><input type="text" class="blank narrow" placeholder="q₀"><span class="fixed-limit">0</span></span>&nbsp; [ <input type="text" class="blank wide" placeholder="expresión"> ] dq
+        </div>
+        <div class="math-line">
+          EC &nbsp;=&nbsp; <input type="text" class="blank wide" placeholder="resultado">
+        </div>
+      </div>
+      <div class="mc-options" data-qid="p5b" data-correct="b">
+        <label class="mc-option"><input type="radio" name="p5b" value="a"><span class="mc-letter">a</span><span class="mc-text">EC = 800</span></label>
+        <label class="mc-option"><input type="radio" name="p5b" value="b"><span class="mc-letter">b</span><span class="mc-text">EC = 400</span></label>
+        <label class="mc-option"><input type="radio" name="p5b" value="c"><span class="mc-letter">c</span><span class="mc-text">EC = 200</span></label>
+        <label class="mc-option"><input type="radio" name="p5b" value="d"><span class="mc-letter">d</span><span class="mc-text">EC = 600</span></label>
+      </div>
+    </div>
+
+    <div class="subpart">
+      <div class="subpart-label">c) Plantee y calcule el excedente del productor. <span class="auto-tag">AUTO</span></div>
+      <div class="math-template">
+        <div class="math-label">Complete el planteamiento y cálculo de EP</div>
+        <div class="math-line">
+          EP &nbsp;=&nbsp; ∫<span class="int-limits"><span class="fixed-limit">q₀</span><span class="fixed-limit">0</span></span>&nbsp; [ p₀ − S(q) ] dq &nbsp;=&nbsp; ∫<span class="int-limits"><input type="text" class="blank narrow" placeholder="q₀"><span class="fixed-limit">0</span></span>&nbsp; [ <input type="text" class="blank wide" placeholder="expresión"> ] dq
+        </div>
+        <div class="math-line">
+          EP &nbsp;=&nbsp; <input type="text" class="blank wide" placeholder="resultado">
+        </div>
+      </div>
+      <div class="mc-options" data-qid="p5c" data-correct="b">
+        <label class="mc-option"><input type="radio" name="p5c" value="a"><span class="mc-letter">a</span><span class="mc-text">EP = 400</span></label>
+        <label class="mc-option"><input type="radio" name="p5c" value="b"><span class="mc-letter">b</span><span class="mc-text">EP = 200</span></label>
+        <label class="mc-option"><input type="radio" name="p5c" value="c"><span class="mc-letter">c</span><span class="mc-text">EP = 100</span></label>
+        <label class="mc-option"><input type="radio" name="p5c" value="d"><span class="mc-letter">d</span><span class="mc-text">EP = 300</span></label>
+      </div>
+    </div>
+
+    <div class="subpart">
+      <div class="subpart-label">d) Interprete brevemente qué significan estos dos excedentes. <span class="manual-tag">DOCENTE</span></div>
+      <div class="open-box" contenteditable="true" data-ph="Escribe tu interpretación..."></div>
+    </div>
+
+    <div class="pts-row"><div class="pts-lbl">Pts (docente, d):</div><input class="pts-box" type="text" placeholder="—"><div class="pts-total">/ 0.3</div>
+      <div class="pts-lbl" style="margin-left:14px">Pts (auto, a/b/c):</div><span id="auto-p5" style="font-weight:700;color:#2563eb">0</span><div class="pts-total">/ 1.1</div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL DE PUNTAJE -->
+<div class="score-panel">
+  <div class="score-row">
+    <div>
+      <div class="score-lbl">Puntaje automático (numérico)</div>
+      <div class="score-sub">Calculado al verificar — sobre 2.8 pts</div>
+    </div>
+    <div class="score-val" id="total-auto">0.0 / 2.8</div>
+  </div>
+  <div class="divider"></div>
+  <div class="score-row">
+    <div>
+      <div class="score-lbl">Puntaje manual (docente)</div>
+      <div class="score-sub">Preguntas abiertas e interpretaciones — sobre 2.2 pts</div>
+    </div>
+    <div class="score-val manual" id="total-manual">— / 2.2</div>
+  </div>
+  <div class="divider"></div>
+  <div class="score-row">
+    <div>
+      <div class="score-lbl">Total estimado</div>
+      <div class="score-sub">Suma automática + manual, sobre 5.0 pts</div>
+    </div>
+    <div class="score-val final" id="total-final">— / 5.0</div>
+  </div>
+</div>
+
+<div class="q-item" style="margin-top:0.75rem">
+  <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:6px">Observaciones del docente</div>
+  <div class="obs-box" contenteditable="true" data-ph="Escribe aquí las observaciones o retroalimentación..."></div>
+</div>
+
+</div>
+
+<script>
+// Puntaje de cada grupo de pregunta automática (id del data-qid -> puntos que vale)
+const groupPoints = {
+  p2b: 0.3,
+  p3a: 0.3, p3b: 0.4,
+  p4a: 0.4, p4b: 0.3,
+  p5a: 0.4, p5b: 0.35, p5c: 0.35
+};
+
+// Puntaje total por punto del parcial (para mostrar en cada subtotal "auto-pX")
+const sectionGroups = {
+  p2: ['p2b'],
+  p3: ['p3a', 'p3b'],
+  p4: ['p4a', 'p4b'],
+  p5: ['p5a', 'p5b', 'p5c']
+};
+
+let yaVerificado = false;
+
+function verificar(){
+  if(yaVerificado) return; // seguridad extra, aunque el botón ya está disabled
+
+  const allGroups = document.querySelectorAll('.mc-options');
+  let grandAuto = 0;
+  const groupScores = {}; // qid -> puntos obtenidos
+
+  allGroups.forEach(group => {
+    const qid = group.getAttribute('data-qid');
+    const correct = group.getAttribute('data-correct');
+    const selected = group.querySelector('input[type="radio"]:checked');
+    const selectedValue = selected ? selected.value : null;
+    const isCorrect = selectedValue === correct;
+
+    // marcar visualmente: la correcta siempre se resalta en verde,
+    // y si el estudiante eligió mal, esa opción se marca en rojo
+    group.querySelectorAll('.mc-option').forEach(opt => {
+      const radio = opt.querySelector('input[type="radio"]');
+      opt.classList.remove('correct-answer','wrong-selected');
+      // limpiar iconos previos
+      const oldIcon = opt.querySelector('.mc-result-icon');
+      if(oldIcon) oldIcon.remove();
+
+      if(radio.value === correct){
+        opt.classList.add('correct-answer');
+        const icon = document.createElement('span');
+        icon.className = 'mc-result-icon ok';
+        icon.textContent = '✓';
+        opt.appendChild(icon);
+      } else if(radio.value === selectedValue){
+        opt.classList.add('wrong-selected');
+        const icon = document.createElement('span');
+        icon.className = 'mc-result-icon bad';
+        icon.textContent = '✗';
+        opt.appendChild(icon);
+      }
+    });
+
+    group.classList.add('locked');
+
+    const pts = isCorrect ? (groupPoints[qid] || 0) : 0;
+    groupScores[qid] = pts;
+    grandAuto += pts;
+  });
+
+  // actualizar subtotales por punto del parcial
+  Object.keys(sectionGroups).forEach(secId => {
+    const total = sectionGroups[secId].reduce((sum, qid) => sum + (groupScores[qid] || 0), 0);
+    const el = document.getElementById('auto-' + secId);
+    if(el) el.textContent = total.toFixed(2);
+  });
+
+  document.getElementById('total-auto').textContent = grandAuto.toFixed(2) + ' / 2.8';
+  actualizarTotal(grandAuto);
+
+  // bloquear el botón de verificar para impedir el tanteo
+  yaVerificado = true;
+  const btn = document.querySelector('.check-btn');
+  btn.disabled = true;
+  btn.textContent = '✓ Respuestas verificadas';
+  document.getElementById('verified-banner').classList.add('show');
+
+  // bloquear también los campos de la plantilla de procedimiento (no se pueden seguir editando)
+  document.querySelectorAll('.blank').forEach(b => { b.disabled = true; });
+}
+
+function actualizarTotal(autoScore){
+  // suma los puntos manuales que el docente haya escrito en los .pts-box
+  let manualScore = 0;
+  let anyManual = false;
+  document.querySelectorAll('.pts-row .pts-box').forEach(box => {
+    const v = parseFloat(box.value);
+    if(!isNaN(v)){ manualScore += v; anyManual = true; }
+  });
+  document.getElementById('total-manual').textContent = (anyManual ? manualScore.toFixed(2) : '—') + ' / 2.2';
+  const finalScore = autoScore + (anyManual ? manualScore : 0);
+  document.getElementById('total-final').textContent = finalScore.toFixed(2) + ' / 5.0';
+}
+
+// recalcular total cuando el docente edite los puntos manuales
+document.addEventListener('input', function(e){
+  if(e.target.classList && e.target.classList.contains('pts-box')){
+    const autoText = document.getElementById('total-auto').textContent;
+    const autoVal = parseFloat(autoText) || 0;
+    actualizarTotal(autoVal);
+  }
+});
+</script>
+</body>
+</html>
